@@ -53,7 +53,10 @@ export const Genre = ({ onUserSelect } ) => {
           <Textarea
             placeholder='Customize Your Prompt'
             value={customGenre}
-            onChange={(e) => onUserSelect("custom",e.target.value)}
+            onChange={(e) => {
+              setCustomGenre(e.target.value)
+              onUserSelect("genre",e.target.value)
+            }}
             className='mt-4'
           />
         )}

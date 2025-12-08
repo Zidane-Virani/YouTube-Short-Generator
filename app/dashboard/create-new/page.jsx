@@ -12,6 +12,8 @@ const Create = () => {
   const [formData, setFormData] = useState([]);
   const [loading, setLoading] = useState(false)
   const [videoScript, setVideoScript] = useState([])
+  const [audioUrl, setAudioUrl] = useState(null)
+  const [captions, setCaptions] = useState([])
   const onHandleChange = (key,value) => {
     setFormData({...formData, [key]: value})
   }
@@ -41,9 +43,22 @@ const Create = () => {
       id: id
     }).then((response) => {
       console.log(response.data)
+      setAudioUrl(response.data.result)
     }).catch((error) => {
       console.log(error)
     })
+  }
+  const GetCaptions = async () => {
+    setLoading(true)
+    await axios.post ("/api/captions", {
+      audioUrl: audioUrl
+    }).then((response) => {
+      console.log(response.data)
+      setCaptions(response.data.result)
+    }).catch((error) => {
+      console.log(error)
+    })
+    setLoading(false)
   }
 
   const handleSubmit = async () => {
