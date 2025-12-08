@@ -5,6 +5,7 @@ import SelectStyle from './_components/SelectStyle'
 import Length from './_components/Length'
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid'
 import Loader from './_components/Loader'
 
 const Create = () => {
@@ -19,18 +20,31 @@ const Create = () => {
   const GetVideoScript = async () => {
     setLoading(true)
     const contents= `Write a script to generate ${formData.duration} seconds video on topic: ${formData.genre} along with AI image prompt in ${formData.style} format for each scene and give me result in JSON format with imagePrompt and ContentText as field, No Plain text`
-    console.log(contents)
     const response = await axios.post ("/api/video-script", {
       contents: contents
     }).then((response) => {
-      console.log(response.data)
       setVideoScript(response.data.response)
+      GenerateAudio(response.data.response)
+    }).catch((error) => {
+      console.log(error)
+    }) 
+    setLoading(false)
+  }
+  const GenerateAudio = async (videoScript) => {
+    let scriptText = ""
+    const id = uuidv4()
+    videoScript.forEach((item) => {
+      scriptText += item.ContentText + " "
+    })
+    await axios.post ("/api/audio", {
+      text: scriptText,
+      id: id
+    }).then((response) => {
+      console.log(response.data)
     }).catch((error) => {
       console.log(error)
     })
-    setLoading(false)
   }
-
 
   const handleSubmit = async () => {
     await GetVideoScript()
